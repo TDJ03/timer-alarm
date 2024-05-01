@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stopwatch and Alarm</title>
+<style>
+    body {
+        padding: 0;
+        margin: 0;
+        font-family: verdana;
+    }
+    
+    .container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #ffdd00ab; /* Yellow for happiness and optimism */
+        
+    }
+    
+    h1 {
+        color: #009688; /* Green for growth and harmony */
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    
+    .digit {
+        font-size: 150px;
+        color: #fff;
+    }
+    
+    .txt {
+        font-size: 30px;
+        color: #fffcd6;
+    }
+    
+    #time {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    #time input {
+        width: 100px;
+        padding: 10px;
+        font-size: 30px;
+        text-align: center;
+    }
+    
+    #buttons {
+        margin-top: 20px;
+    }
+    
+    .btn {
+        width: 100px;
+        padding: 10px 15px;
+        margin: 0px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 20px;
+        transition: 0.5s;
+        color: #FF5722; /* Orange for enthusiasm and creativity */
+        font-weight: 500;
+    }
+    
+    #start {
+        background-color: #03A9F4; /* Blue for stability and trust */
+    }
+    
+    #stop {
+        background-color: #8BC34A; /* Light green for balance and energy */
+    }
+    
+    #reset {
+        background-color: #FF5252; /* Red for urgency and determination */
+    }
+</style>
+</head>
+
+<body>
+<audio id="alarmSound" src="./assects/sound02.mp3" preload="auto"></audio>
+<div class="container">
+    <h1>Time Manager <br>Stopwatch</h1>
+    <div id="time">
+        <input type="text" id="inputHour" placeholder="Hours"> :
+        <input type="text" id="inputMinute" placeholder="Minutes"> :
+        <input type="text" id="inputSecond" placeholder="Seconds">
+    </div>
+    <div id="buttons">
+        <button class="btn" id="start">Start</button>
+        <button class="btn" id="stop">Stop</button>
+        <button class="btn" id="stopwatchReset">Reset</button>
+        <input type="range" id="volumeControl" min="0" max="100" value="50">
+        <button class="btn" id="stopwatchStopSound">Stop Sound</button>
+    </div>
+</div>
+<script>
+    let startBtn = document.getElementById('start');
+    let stopBtn = document.getElementById('stop');
+    let resetBtn = document.getElementById('stopwatchReset'); // Changed ID
+    let inputHour = document.getElementById('inputHour');
+    let inputMinute = document.getElementById('inputMinute');
+    let inputSecond = document.getElementById('inputSecond');
+    let alarmSound = document.getElementById('alarmSound');
+    let volumeControl = document.getElementById('volumeControl');
+    let stopSoundBtn = document.getElementById('stopwatchStopSound'); // Changed ID
+    
+    let hour = 0;
+    let minute = 0;
+    let second = 0;
+    let timer;
+    let isRunning = false;
+    
+    startBtn.addEventListener('click', function () {
+        if (!isRunning) {
+            hour = parseInt(inputHour.value) || 0;
+            minute = parseInt(inputMinute.value) || 0;
+            second = parseInt(inputSecond.value) || 0;
+            isRunning = true;
+            timer = setInterval(stopWatch, 1000);
+        }
+    });
+    
+    stopBtn.addEventListener('click', function () {
+        clearInterval(timer);
+        isRunning = false;
+    });
+    
+    resetBtn.addEventListener('click', function () {
+        clearInterval(timer);
+        isRunning = false;
+        hour = 0;
+        minute = 0;
+        second = 0;
+        inputHour.value = "";
+        inputMinute.value = "";
+        inputSecond.value = "";
+    });
+    
+    volumeControl.addEventListener('input', function () {
+        alarmSound.volume = volumeControl.value / 100;
+    });
+    
+    stopSoundBtn.addEventListener('click', function () {
+        alarmSound.pause();
+        alarmSound.currentTime = 0;
+    });
+    
+    function stopWatch() {
+        if (hour === 0 && minute === 0 && second === 0) {
+            clearInterval(timer);
+            isRunning = false;
+            // Trigger alarm action (play sound)
+            alarmSound.play();
+        } else {
+            if (second === 0) {
+                if (minute === 0) {
+                    hour--;
+                    minute = 59;
+                } else {
+                    minute--;
+                }
+                second = 59;
+            } else {
+                second--;
+            }
+            updateStopwatch();
+        }
+    }
+    
+    function updateStopwatch() {
+        document.getElementById('inputHour').value = pad(hour);
+        document.getElementById('inputMinute').value = pad(minute);
+        document.getElementById('inputSecond').value = pad(second);
+    }
+    
+    function pad(value) {
+        return value < 10 ? '0' + value : value;
+    }
+</script>
+
+<h1>Prayer Time Alarm</h1>
+<div id="times">
+    <label for="fajr">Fajr Time:</label>
+    <input type="time" id="fajrTime">
+    <label for="dhuhr">Dhuhr Time:</label>
+    <input type="time" id="dhuhrTime">
+    <label for="asr">Asr Time:</label>
+    <input type="time" id="asrTime">
+    <label for="maghrib">Maghrib Time:</label>
+    <input type="time" id="maghribTime">
+    <label for="isha">Isha Time:</label>
+    <input type="time" id="ishaTime">
+</div>
+<div id="buttons">
+    <button class="btn" id="alarmReset">Reset</button> <!-- Changed ID -->
+    <button class="btn" id="stopAlarmSound">Stop Sound</button> <!-- Changed ID -->
+</div>
+<script>
+    isRunning = false; // Removed let keyword
+    alarmSound = document.getElementById('alarmSound'); // Removed let keyword
+
+    let alarmResetBtn = document.getElementById('alarmReset'); // Changed ID
+    let stopAlarmSoundBtn = document.getElementById('stopAlarmSound'); // Changed ID
+    let fajrTimeInput = document.getElementById('fajrTime');
+    let dhuhrTimeInput = document.getElementById('dhuhrTime');
+    let asrTimeInput = document.getElementById('asrTime');
+    let maghribTimeInput = document.getElementById('maghribTime');
+    let ishaTimeInput = document.getElementById('ishaTime');
+
+    function checkPrayerTimes() {
+        let now = new Date();
+        let currentHour = now.getHours();
+        let currentMinute = now.getMinutes();
+        let fajrTime = parseTime(fajrTimeInput.value);
+        let dhuhrTime = parseTime(dhuhrTimeInput.value);
+        let asrTime = parseTime(asrTimeInput.value);
+        let maghribTime = parseTime(maghribTimeInput.value);
+        let ishaTime = parseTime(ishaTimeInput.value);
+        
+        if (!isRunning) {
+            if (currentHour === fajrTime.hour && currentMinute === fajrTime.minute) {
+                playAlarmSound();
+            } else if (currentHour === dhuhrTime.hour && currentMinute === dhuhrTime.minute) {
+                playAlarmSound();
+            } else if (currentHour === asrTime.hour && currentMinute === asrTime.minute) {
+                playAlarmSound();
+            } else if (currentHour === maghribTime.hour && currentMinute === maghribTime.minute) {
+                playAlarmSound();
+            } else if (currentHour === ishaTime.hour && currentMinute === ishaTime.minute) {
+                playAlarmSound();
+            }
+        }
+    }
+    
+    alarmResetBtn.addEventListener('click', function () {
+        resetTimes();
+    });
+    
+    stopAlarmSoundBtn.addEventListener('click', function () {
+        stopAlarmSound();
+    });
+    
+    function playAlarmSound() {
+        alarmSound.play();
+        isRunning = true;
+    }
+    
+    function stopAlarmSound() {
+        if (isRunning) {
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+            isRunning = false;
+        }
+    }
+
+    function resetTimes() {
+        fajrTimeInput.value = "";
+        dhuhrTimeInput.value = "";
+        asrTimeInput.value = "";
+        maghribTimeInput.value = "";
+        ishaTimeInput.value = "";
+    }
+    
+    function parseTime(timeString) {
+        let parts = timeString.split(':');
+        return {
+            hour: parseInt(parts[0]),
+            minute: parseInt(parts[1])
+        };
+    }
+
+    setInterval(checkPrayerTimes, 1000); // Start continuous checking of prayer times
+</script>
+</body>
+</html>
